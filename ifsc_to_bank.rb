@@ -60,12 +60,12 @@ class IfscFetcher
 
   def execute
     ifsc_codes.each_slice(fiber_load).with_index do |chunk, chunk_idx|
-      @fetchers << Fiber.new do
+      @fetchers << Thread.new do
         process_chunk(chunk, chunk_idx)
       end
     end
 
-    @fetchers.each(&:resume)
+    @fetchers.each(&:join)
   end
 
   def ifsc_codes
